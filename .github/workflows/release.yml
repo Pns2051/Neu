@@ -54,15 +54,6 @@ jobs:
       - name: Install cargo-packager
         run: cargo install cargo-packager --locked
 
-      - name: Ensure valid PNG icon (Linux)
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          python3 -c "
-          from PIL import Image
-          img = Image.open('logo.png').convert('RGBA').resize((512,512))
-          img.save('logo.png','PNG')
-          "
-
       - name: Build release binary
         run: cargo build --release
 
