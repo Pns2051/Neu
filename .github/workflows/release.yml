@@ -21,10 +21,13 @@ jobs:
         include:
           - os: ubuntu-latest
             label: linux
+            formats: deb,appimage
           - os: windows-latest
             label: windows
+            formats: nsis,wix
           - os: macos-latest
             label: macos
+            formats: dmg
 
     steps:
       - uses: actions/checkout@v4
@@ -58,7 +61,7 @@ jobs:
         run: cargo build --release
 
       - name: Package application
-        run: cargo packager --release
+        run: cargo packager --release --formats ${{ matrix.formats }}
 
       - name: Collect packages
         shell: bash
