@@ -6,7 +6,7 @@
 
 > A production-grade, cross-platform, modular music platform built with Rust and Slint.
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![License](https://img.shields.io/badge/license-GPLv3-blue.svg)
 ![Rust](https://img.shields.io/badge/rust-1.75%2B-orange.svg)
 ![Slint](https://img.shields.io/badge/ui-Slint-brightgreen.svg)
 
@@ -95,4 +95,4 @@ We welcome contributions! Please see our [CONTRIBUTING.md](./CONTRIBUTING.md) fo
 
 ## 📜 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
