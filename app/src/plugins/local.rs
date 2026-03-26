@@ -1,7 +1,7 @@
 use plugin_sdk::{Capabilities, MusicPlugin, StreamInfo, TrackSource, UnifiedTrack};
 use async_trait::async_trait;
-use lofty::file::{AudioFile, TaggedFileExt};
-use lofty::probe::Probe;
+use lofty::{Accessor, AudioFile, TaggedFileExt};
+use lofty::read_from_path;
 use walkdir::WalkDir;
 
 pub struct LocalPlugin {
@@ -45,7 +45,7 @@ impl MusicPlugin for LocalPlugin {
                             let mut artist = "Unknown Artist".to_string();
                             let mut duration = 0;
 
-                            if let Ok(tagged_file) = Probe::open(path).and_then(|p| p.read()) {
+                            if let Ok(tagged_file) = read_from_path(path) {
                                 duration = tagged_file.properties().duration().as_secs() as u32;
                                 if let Some(tag) = tagged_file.primary_tag() {
                                     if let Some(t) = tag.title() {
