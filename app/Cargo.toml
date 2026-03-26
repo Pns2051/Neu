@@ -1,0 +1,18 @@
+[package]
+name = "app"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+plugin_sdk = { path = "../plugin_sdk" }
+playback = { path = "../playback" }
+recommender = { path = "../recommender" }
+yt_cipher = { path = "../yt_cipher" }
+tokio = { workspace = true }
+anyhow = { workspace = true }
+slint = "1.5"
+walkdir = "2.4"
+lofty = "0.17"
+
+[build-dependencies]
+slint-build = "1.5"

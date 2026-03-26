@@ -1,0 +1,13 @@
+[package]
+name = "yt_cipher"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+reqwest = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+regex = "1.10"
+plugin_sdk = { path = "../plugin_sdk" }
+tokio = { workspace = true }

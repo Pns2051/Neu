@@ -1,0 +1,9 @@
+[package]
+name = "recommender"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+plugin_sdk = { path = "../plugin_sdk" }
+anyhow = "1.0"
+serde = { version = "1.0", features = ["derive"] }

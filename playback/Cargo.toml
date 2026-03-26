@@ -1,0 +1,12 @@
+[package]
+name = "playback"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+plugin_sdk = { path = "../plugin_sdk" }
+tokio = { workspace = true }
+rodio = "0.18"
+reqwest = { workspace = true }
+bytes = "1.5"

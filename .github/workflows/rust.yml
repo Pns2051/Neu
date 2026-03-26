@@ -1,0 +1,37 @@
+name: Rust CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Install Slint System Dependencies
+      run: sudo apt-get update && sudo apt-get install -y freeglut3-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev libskia-dev cmake pkg-config fontconfig libfontconfig1-dev
+      
+    - name: Install Rust Toolchain
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        components: clippy, rustfmt
+      
+    - name: Check Formatting
+      run: cargo fmt -- --check
+      
+    - name: Build Workspace
+      run: cargo build --verbose
+      
+    - name: Run Tests
+      run: cargo test --verbose
+      
+    - name: Run Clippy Lints
+      run: cargo clippy --workspace -- -D warnings

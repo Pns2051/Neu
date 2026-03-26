@@ -1,0 +1,115 @@
+import { Button, VerticalBox, ScrollView, StandardTableView, LineEdit, Slider } from "std-widgets.slint";
+
+export struct TrackData {
+    title: string,
+    artist: string,
+    duration: string,
+}
+
+export component AppWindow inherits Window {
+    title: "Neu";
+    preferred-width: 800px;
+    preferred-height: 600px;
+    background: #121212;
+
+    in property <[TrackData]> tracks;
+    in property <string> now_playing: "No Track Playing";
+    callback search(string);
+    callback play_track(int);
+
+    VerticalBox {
+        padding: 24px;
+        spacing: 16px;
+
+        HorizontalLayout {
+            spacing: 12px;
+            alignment: start;
+            Image {
+                source: @image-url("../assets/logo.jpg");
+                width: 48px;
+                height: 48px;
+            }
+            Text {
+                text: "Neu";
+                font-size: 28px;
+                font-weight: 700;
+                color: white;
+                vertical-alignment: center;
+            }
+        }
+
+        HorizontalLayout {
+            spacing: 12px;
+            search_input := LineEdit {
+                placeholder-text: "Search YouTube or Local...";
+                accepted => {
+                    root.search(self.text);
+                }
+            }
+            Button {
+                text: "Search";
+                primary: true;
+                clicked => {
+                    root.search(search_input.text);
+                }
+            }
+        }
+
+        ScrollView {
+            VerticalBox {
+                for track[index] in root.tracks: Rectangle {
+                    height: 60px;
+                    border-radius: 8px;
+                    background: touch.has-hover ? #2C2C2C : #1E1E1E;
+                    
+                    touch := TouchArea {
+                        clicked => {
+                            root.play_track(index);
+                        }
+                    }
+
+                    HorizontalLayout {
+                        padding: 12px;
+                        spacing: 16px;
+                        Text {
+                            text: track.title;
+                            color: white;
+                            vertical-alignment: center;
+                            font-size: 16px;
+                            width: 300px; // Fixed width for alignment demo
+                        }
+                        Text {
+                            text: track.artist;
+                            color: #B3B3B3;
+                            vertical-alignment: center;
+                        }
+                    }
+                }
+            }
+        }
+
+        Rectangle {
+            height: 90px;
+            border-radius: 12px;
+            background: #1E1E1E;
+            padding: 16px;
+
+            HorizontalLayout {
+                spacing: 16px;
+                alignment: center;
+                VerticalBox {
+                    alignment: center;
+                    Text {
+                        text: root.now_playing;
+                        color: white;
+                        font-weight: 700;
+                    }
+                }
+                Button {
+                    text: "Play / Pause";
+                    width: 120px;
+                }
+            }
+        }
+    }
+}
