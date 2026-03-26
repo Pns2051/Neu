@@ -13,6 +13,26 @@ anyhow = { workspace = true }
 slint = "1.5"
 walkdir = "2.4"
 lofty = "0.17"
+async-trait = { workspace = true }
+env_logger = "0.11"
 
 [build-dependencies]
 slint-build = "1.5"
+
+[package.metadata.packager]
+product-name = "Neu"
+identifier = "com.pns2051.neu"
+authors = ["Pns2051"]
+license-file = "../LICENSE"
+formats = ["default"]
+icons = ["../logo.png"]
+
+[[package.metadata.packager.binaries]]
+path = "app"
+main = true
+
+[package.metadata.packager.deb]
+depends = ["libx11-6", "libxkbcommon0", "libfontconfig1"]
+
+[package.metadata.packager.windows]
+digest-algorithm = "sha256"
