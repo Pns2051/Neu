@@ -24,7 +24,7 @@ product-name = "Neu"
 identifier = "com.pns2051.neu"
 authors = ["Pns2051"]
 license-file = "../LICENSE"
-formats = ["default"]
+formats = ["deb", "appimage", "nsis", "wix", "dmg"]
 icons = ["../logo.png"]
 
 [[package.metadata.packager.binaries]]
