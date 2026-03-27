@@ -3,11 +3,13 @@ use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex};
 use std::fs;
 
+#[allow(dead_code)]
 pub struct CacheLayer {
     memory_cache: Arc<Mutex<HashMap<String, Vec<u8>>>>,
     disk_dir: PathBuf,
 }
 
+#[allow(dead_code)]
 impl CacheLayer {
     pub fn new<P: AsRef<Path>>(disk_dir: P) -> anyhow::Result<Self> {
         let path = disk_dir.as_ref().to_path_buf();

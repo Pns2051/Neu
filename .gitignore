@@ -20,3 +20,13 @@ Thumbs.db
 
 # Environment variables
 .env
+
+# Build artifacts
+build/
+VERSION
+*.deb
+*.rpm
+*.AppImage
+*.msi
+*.dmg
+*.exe

@@ -14,7 +14,7 @@ public:
         settings = new QSettings("Pns2051", "Neu", this);
     }
 
-    void checkForUpdates() {
+    Q_INVOKABLE void checkForUpdates() {
         if (!settings->value("updates/enabled", true).toBool()) {
             qDebug() << "Update checker disabled by user.";
             return;
@@ -33,8 +33,8 @@ public:
         });
     }
 
-    bool isUpdatesEnabled() const { return settings->value("updates/enabled", true).toBool(); }
-    void setUpdatesEnabled(bool enabled) { settings->setValue("updates/enabled", enabled); }
+    Q_INVOKABLE bool isUpdatesEnabled() const { return settings->value("updates/enabled", true).toBool(); }
+    Q_INVOKABLE void setUpdatesEnabled(bool enabled) { settings->setValue("updates/enabled", enabled); }
 
 signals:
     void updateAvailable(const QString& version);

@@ -33,7 +33,7 @@ impl Read for StreamBuffer {
         }
         
         let mut read = 0;
-        for (_i, b) in buf.iter_mut().enumerate() {
+        for b in buf.iter_mut() {
             if let Some(byte) = inner.pop_front() {
                 *b = byte;
                 read += 1;

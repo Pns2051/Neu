@@ -11,12 +11,12 @@ public:
         // Initialize Discord RPC connection here
     }
 
-    void updatePresence(const QString& title, const QString& artist, qint64 remainingTime) {
+    Q_INVOKABLE void updatePresence(const QString& title, const QString& artist, qint64 remainingTime) {
         qDebug() << "Updating Discord RPC: Listening to" << title << "by" << artist;
         // Call Discord_UpdatePresence(...)
     }
 
-    void clearPresence() {
+    Q_INVOKABLE void clearPresence() {
         qDebug() << "Clearing Discord RPC";
         // Call Discord_ClearPresence()
     }

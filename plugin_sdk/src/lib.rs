@@ -42,6 +42,11 @@ pub trait MusicPlugin: Send + Sync {
     async fn stream(&self, track: &UnifiedTrack) -> anyhow::Result<StreamInfo>;
 }
 
+/// # Safety
+///
+/// This function is unsafe because it loads a shared library and calls a symbol
+/// from it. The caller must ensure that the library is a valid Neu plugin
+/// and that the `create_plugin` symbol is present and has the correct signature.
 pub unsafe fn load_plugin(path: &str) -> anyhow::Result<Box<dyn MusicPlugin>> {
     let lib_box = Box::new(libloading::Library::new(path)?);
     // Leak the library to prevent unloading when the Box is dropped,

@@ -38,6 +38,18 @@ target_link_libraries(neu-cpp PRIVATE
     Qt6::NetworkAuth
 )
 
+# Release Optimizations
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+    add_definitions(-DNDEBUG)
+    if(NOT MSVC)
+        add_compile_options(-O3 -march=native -flto)
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -flto")
+    else()
+        add_compile_options(/O2 /GL)
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /LTCG")
+    endif()
+endif()
+
 # Linux Specific Optimizations
 if(LINUX)
     add_definitions(-DNEU_LINUX_OPTIMIZED)

@@ -2,8 +2,10 @@
 #include <QObject>
 #include <QVector>
 #include <QMap>
+#include <QVariantList>
 #include <memory>
 #include "MusicPlugin.h"
+#include "Types.h"
 
 class PluginRegistry : public QObject {
     Q_OBJECT
@@ -28,6 +30,17 @@ public:
             if (p->name() == name) return p;
         }
         return nullptr;
+    }
+
+    Q_INVOKABLE QVariantList search(const QString& query) {
+        QVariantList results;
+        for (auto* plugin : plugins) {
+            auto pluginResults = plugin->search(query);
+            for (const auto& track : pluginResults) {
+                results.append(QVariant::fromValue(track));
+            }
+        }
+        return results;
     }
 
 signals:

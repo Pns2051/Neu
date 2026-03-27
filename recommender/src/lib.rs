@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 
+#[derive(Default)]
 pub struct Recommender {
     embeddings: HashMap<String, Vec<f32>>,
     user_likes: Vec<String>,
@@ -7,10 +8,7 @@ pub struct Recommender {
 
 impl Recommender {
     pub fn new() -> Self {
-        Self {
-            embeddings: HashMap::new(),
-            user_likes: Vec::new(),
-        }
+        Self::default()
     }
 
     pub fn add_track(&mut self, track_id: &str, embedding: Vec<f32>) {
@@ -30,10 +28,10 @@ impl Recommender {
         let mut dot = 0.0;
         let mut norm_a = 0.0;
         let mut norm_b = 0.0;
-        for i in 0..a.len() {
-            dot += a[i] * b[i];
-            norm_a += a[i] * a[i];
-            norm_b += b[i] * b[i];
+        for (a_val, b_val) in a.iter().zip(b) {
+            dot += a_val * b_val;
+            norm_a += a_val * a_val;
+            norm_b += b_val * b_val;
         }
         if norm_a == 0.0 || norm_b == 0.0 {
             return 0.0;
@@ -52,8 +50,8 @@ impl Recommender {
 
         for id in &self.user_likes {
             if let Some(emb) = self.embeddings.get(id) {
-                for i in 0..dim {
-                    user_profile[i] += emb[i];
+                for (profile_val, emb_val) in user_profile.iter_mut().zip(emb) {
+                    *profile_val += emb_val;
                 }
                 count += 1;
             }
@@ -63,8 +61,8 @@ impl Recommender {
             return vec![];
         }
 
-        for i in 0..dim {
-            user_profile[i] /= count as f32;
+        for val in &mut user_profile {
+            *val /= count as f32;
         }
 
         let mut scores: Vec<(String, f32)> = self.embeddings

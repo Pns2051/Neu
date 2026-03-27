@@ -14,11 +14,11 @@ public:
         setupSpotify();
     }
 
-    void loginYouTube() {
+    Q_INVOKABLE void loginYouTube() {
         youtubeOAuth.grant();
     }
 
-    void loginSpotify() {
+    Q_INVOKABLE void loginSpotify() {
         spotifyOAuth.grant();
     }
 

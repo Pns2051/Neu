@@ -22,7 +22,9 @@ public:
         }
     }
 
-    void createPlaylist(const QString& name) {
+#include "Types.h"
+
+    Q_INVOKABLE void createPlaylist(const QString& name) {
         QSqlQuery query;
         query.prepare("INSERT INTO playlists (name) VALUES (?)");
         query.addBindValue(name);
@@ -30,7 +32,7 @@ public:
         emit playlistsChanged();
     }
 
-    void addTrackToPlaylist(int playlistId, const UnifiedTrack& track) {
+    Q_INVOKABLE void addTrackToPlaylist(int playlistId, const UnifiedTrack& track) {
         QSqlQuery query;
         query.prepare("INSERT INTO tracks (playlist_id, track_id, title, artist) VALUES (?, ?, ?, ?)");
         query.addBindValue(playlistId);

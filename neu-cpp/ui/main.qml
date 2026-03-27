@@ -90,21 +90,24 @@ Window {
                 spacing: 16
                 Layout.margins: 24
 
+    property var searchResults: []
+
                 RowLayout {
                     spacing: 12
                     TextField {
                         id: searchInput
                         Layout.fillWidth: true
                         placeholderText: "Search YouTube or Local..."
+                        onAccepted: root.searchResults = plugins.search(text)
                     }
                     Button {
                         text: "Search"
-                        onClicked: console.log("Searching: " + searchInput.text)
+                        onClicked: root.searchResults = plugins.search(searchInput.text)
                     }
                 }
 
                 Label {
-                    text: "Search Results"
+                    text: searchResults.length > 0 ? "Search Results (" + searchResults.length + ")" : "Search Results"
                     color: "white"
                     font.pixelSize: 18
                     font.bold: true
@@ -114,18 +117,41 @@ Window {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     clip: true
-                    model: 20
+                    model: root.searchResults
                     delegate: ItemDelegate {
                         width: parent.width
                         height: 56
-                        Column {
-                            anchors.verticalCenter: parent.verticalCenter
-                            anchors.left: parent.left
+                        onClicked: {
+                            root.nowPlayingTitle = modelData.title
+                            root.nowPlayingArtist = modelData.artist
+                            root.isPlaying = true
+                            playback.play(plugins.getPlugin(modelData.source)->stream(modelData.id))
+                            discord.updatePresence(modelData.title, modelData.artist, modelData.duration)
+                        }
+
+                        RowLayout {
+                            anchors.fill: parent
                             anchors.leftMargin: 16
-                            Label { text: "Track " + index; color: "white" }
-                            Label { text: "Artist " + index; color: "#B3B3B3"; font.pixelSize: 12 }
+                            anchors.rightMargin: 16
+                            spacing: 12
+                            
+                            Column {
+                                Layout.fillWidth: true
+                                Label { text: modelData.title; color: "white" }
+                                Label { text: modelData.artist + " • " + modelData.source; color: "#B3B3B3"; font.pixelSize: 12 }
+                            }
+
+                            Button {
+                                text: "+"
+                                flat: true
+                                onClicked: {
+                                    playlists.addTrackToPlaylist(1, modelData)
+                                    console.log("Added to playlist: " + modelData.title)
+                                }
+                            }
                         }
                     }
+                }
                 }
             }
 
@@ -243,5 +269,12 @@ Window {
     Connections {
         target: updater
         function onUpdateAvailable(version) { console.log("New version available: " + version) }
+    }
+
+    Connections {
+        target: playback
+        function onPositionChanged(pos) { root.playbackProgress = pos }
+        function onDurationChanged(dur) { playbackSlider.to = dur }
+        function onPlayingChanged(p) { root.isPlaying = p }
     }
 }

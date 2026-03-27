@@ -1,9 +1,4 @@
 #include "YouTubePlugin.h"
-#include "../core/YouTubeCipher.h"
-#include <QNetworkAccessManager>
-#include <QNetworkRequest>
-#include <QNetworkReply>
-#include <QEventLoop>
 
 QString YouTubePlugin::name() const {
     return "YouTube";
@@ -12,7 +7,7 @@ QString YouTubePlugin::name() const {
 QVector<UnifiedTrack> YouTubePlugin::search(const QString& query) {
     // In a real app, this would call the YouTube Search API
     QVector<UnifiedTrack> results;
-    UnifiedTrack track;
+    struct UnifiedTrack track;
     track.id = "video_id_123";
     track.title = "YouTube Result: " + query;
     track.artist = "YouTube Artist";

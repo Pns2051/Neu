@@ -10,6 +10,15 @@ pub struct YouTubeClient {
     js_ops_cache: Vec<Op>,
 }
 
+#[derive(Debug, Clone)]
+pub struct Track {
+    pub id: String,
+    pub title: String,
+    pub artist: String,
+    pub album: Option<String>,
+    pub duration: u32,
+}
+
 impl YouTubeClient {
     pub fn new(api_key: &str) -> Self {
         Self {
@@ -17,6 +26,28 @@ impl YouTubeClient {
             api_key: api_key.to_string(),
             js_ops_cache: vec![],
         }
+    }
+
+    pub async fn search(&self, query: &str) -> Result<Vec<Track>> {
+        // Real search logic would go here:
+        // https://music.youtube.com/youtubei/v1/search?key=...
+        // For now, return a more formal "mock" that simulates the API structure
+        Ok(vec![
+            Track {
+                id: "vid_123".into(),
+                title: format!("{} - Mastered", query),
+                artist: "Universal Artist".into(),
+                album: Some("Legacy Album".into()),
+                duration: 210,
+            },
+            Track {
+                id: "vid_456".into(),
+                title: format!("{} (Live at Wembley)", query),
+                artist: "Universal Artist".into(),
+                album: None,
+                duration: 450,
+            }
+        ])
     }
 
     pub async fn fetch_stream_url(&mut self, video_id: &str) -> Result<String> {

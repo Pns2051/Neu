@@ -3,12 +3,22 @@ set -e
 
 echo "🚀 Starting Neu Music Platform Update Cycle..."
 
-# 1. Version Bump
-VERSION=$(cat VERSION 2>/dev/null || echo "1.0.0")
-echo "Current Version: $VERSION"
-# Logic to increment version would go here
-NEW_VERSION="1.0.1"
-echo $NEW_VERSION > VERSION
+# 1. Version Management
+VERSION_FILE="VERSION"
+CURRENT_VERSION=$(cat $VERSION_FILE 2>/dev/null || echo "1.0.0")
+echo "Current Version: $CURRENT_VERSION"
+
+# Use argument if provided, otherwise increment minor version
+if [ -z "$1" ]; then
+    IFS='.' read -r -a parts <<< "$CURRENT_VERSION"
+    parts[2]=$((parts[2] + 1))
+    NEW_VERSION="${parts[0]}.${parts[1]}.${parts[2]}"
+else
+    NEW_VERSION=$1
+fi
+
+echo "🚀 Releasing Neu $NEW_VERSION..."
+echo $NEW_VERSION > $VERSION_FILE
 
 # 2. Build C++/Qt Project
 mkdir -p build && cd build

@@ -22,7 +22,7 @@ fn main() -> anyhow::Result<()> {
     // 2. Initialize Core Engines
     let (engine, _stream) = PlaybackEngine::new()?;
     let engine = Arc::new(engine);
-    let mut recommender = Recommender::new();
+    let _recommender = Recommender::new();
     
     // 3. Initialize Plugins
     let plugins: Vec<Box<dyn MusicPlugin>> = vec![
@@ -44,12 +44,10 @@ fn main() -> anyhow::Result<()> {
     let plugins_search = Arc::clone(&plugins);
     app.on_search({
         let app_weak = app_weak.clone();
-        let tracks_model = tracks_model.clone();
         move |query| {
             let app = app_weak.unwrap();
             let query = query.to_string();
             let plugins = Arc::clone(&plugins_search);
-            let tracks_model = tracks_model.clone();
             let app_weak_inner = app_weak.clone();
 
             app.set_now_playing_title(SharedString::from(format!("Searching: {}", query)));
@@ -97,7 +95,6 @@ fn main() -> anyhow::Result<()> {
             let track_data = tracks_model.row_data(index as usize).unwrap();
             let engine = Arc::clone(&engine_play);
             let plugins = Arc::clone(&plugins_play);
-            let app_weak_inner = app_weak.clone();
 
             app.set_now_playing_title(track_data.title.clone());
             app.set_now_playing_artist(track_data.artist.clone());

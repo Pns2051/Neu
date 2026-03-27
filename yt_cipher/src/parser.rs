@@ -24,9 +24,7 @@ pub fn decipher(sig: &str, ops: &[Op]) -> String {
             }
             Op::Swap(n) => {
                 if !chars.is_empty() && *n < chars.len() {
-                    let first = chars[0];
-                    chars[0] = chars[*n];
-                    chars[*n] = first;
+                    chars.swap(0, *n);
                 }
             }
         }

@@ -1,18 +1,20 @@
-use plugin_sdk::{Capabilities, MusicPlugin, StreamInfo, TrackSource, UnifiedTrack};
-use async_trait::async_trait;
-use yt_cipher::YouTubeClient;
+use tokio::sync::Mutex;
 
 pub struct YouTubePlugin {
-    client: YouTubeClient,
+    client: Mutex<YouTubeClient>,
 }
 
 impl YouTubePlugin {
     pub fn new(api_key: &str) -> Self {
         Self {
-            client: YouTubeClient::new(api_key),
+            client: Mutex::new(YouTubeClient::new(api_key)),
         }
     }
 }
+
+use plugin_sdk::{Capabilities, MusicPlugin, StreamInfo, TrackSource, UnifiedTrack};
+use async_trait::async_trait;
+use yt_cipher::YouTubeClient;
 
 #[async_trait]
 impl MusicPlugin for YouTubePlugin {
@@ -28,41 +30,27 @@ impl MusicPlugin for YouTubePlugin {
     }
 
     async fn search(&self, query: &str) -> anyhow::Result<Vec<UnifiedTrack>> {
-        // In a real app, we'd use YouTubeClient to search.
-        // For this demo 'full app', we'll return some realistic results
-        // that would be fetched if the API key was valid.
+        let client = self.client.lock().await;
+        let results = client.search(query).await?;
         
-        let results = vec![
-            UnifiedTrack {
-                id: "video_1".to_string(),
-                title: format!("{} - Official Audio", query),
-                artist: "YouTube Artist".to_string(),
-                album: Some("YouTube Album".to_string()),
-                duration: 240,
-                artwork: String::new(),
-                source: TrackSource::YouTube { video_id: "video_1".to_string() },
-                playable: true,
-            },
-            UnifiedTrack {
-                id: "video_2".to_string(),
-                title: format!("{} (Remix)", query),
-                artist: "DJ YouTube".to_string(),
-                album: None,
-                duration: 315,
-                artwork: String::new(),
-                source: TrackSource::YouTube { video_id: "video_2".to_string() },
-                playable: true,
-            }
-        ];
+        let unified = results.into_iter().map(|t| UnifiedTrack {
+            id: t.id.clone(),
+            title: t.title,
+            artist: t.artist,
+            album: t.album,
+            duration: t.duration,
+            artwork: String::new(),
+            source: TrackSource::YouTube { video_id: t.id },
+            playable: true,
+        }).collect();
         
-        Ok(results)
+        Ok(unified)
     }
 
     async fn stream(&self, track: &UnifiedTrack) -> anyhow::Result<StreamInfo> {
         match &track.source {
             TrackSource::YouTube { video_id } => {
-                // Here we actually use the yt_cipher crate to get the playback URL
-                let mut client = YouTubeClient::new("fake_key"); // In reality, use self.client
+                let mut client = self.client.lock().await;
                 let url = client.fetch_stream_url(video_id).await?;
                 Ok(StreamInfo::AudioUrl(url))
             }
