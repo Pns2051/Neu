@@ -1,5 +1,6 @@
 slint::include_modules!();
 
+#[path = "core/cache.rs"]
 mod cache;
 mod plugins;
 
