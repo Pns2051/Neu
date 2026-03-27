@@ -1,0 +1,30 @@
+name: neu-music
+base: core22
+version: '1.0.0'
+summary: High Performance C++/Qt Music Client
+description: |
+  Neu is a modular music platform built for performance and extensibility.
+
+grade: stable
+confinement: strict
+
+parts:
+  neu-app:
+    plugin: cmake
+    source: .
+    build-snaps:
+      - qt6-base-sdk
+    stage-packages:
+      - libqt6gui6
+      - libqt6qml6
+      - libpulse0
+      - libasound2
+
+apps:
+  neu:
+    command: bin/neu-cpp
+    extensions: [qt6-base]
+    plugs:
+      - audio-playback
+      - network
+      - home

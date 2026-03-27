@@ -4,7 +4,6 @@ use rodio::{Decoder, OutputStream, OutputStreamHandle, Sink};
 use std::collections::VecDeque;
 use std::io::{Read, Seek, SeekFrom};
 use std::sync::{Arc, Condvar, Mutex};
-use std::time::Duration;
 
 /// Custom streaming buffer to allow Rodio to read from streaming HTTP responses
 pub struct StreamBuffer {
@@ -34,7 +33,7 @@ impl Read for StreamBuffer {
         }
         
         let mut read = 0;
-        for (i, b) in buf.iter_mut().enumerate() {
+        for (_i, b) in buf.iter_mut().enumerate() {
             if let Some(byte) = inner.pop_front() {
                 *b = byte;
                 read += 1;
@@ -61,16 +60,15 @@ impl Seek for StreamBuffer {
 }
 
 pub struct PlaybackEngine {
-    _stream: OutputStream,
-    stream_handle: OutputStreamHandle,
+    _stream_handle: OutputStreamHandle,
     sink: Sink,
 }
 
 impl PlaybackEngine {
-    pub fn new() -> Result<Self> {
-        let (_stream, stream_handle) = OutputStream::try_default()?;
+    pub fn new() -> Result<(Self, OutputStream)> {
+        let (stream, stream_handle) = OutputStream::try_default()?;
         let sink = Sink::try_new(&stream_handle)?;
-        Ok(Self { _stream, stream_handle, sink })
+        Ok((Self { _stream_handle: stream_handle, sink }, stream))
     }
 
     pub async fn play_stream(&self, stream_info: StreamInfo) -> Result<()> {
@@ -119,5 +117,17 @@ impl PlaybackEngine {
     pub fn preload_next(&self, _track: &UnifiedTrack) {
         // Gapless playback
         // Implementation would check remaining duration, fetch stream URL, and call append on the sink
+    }
+
+    pub fn toggle(&self) {
+        if self.sink.is_paused() {
+            self.sink.play();
+        } else {
+            self.sink.pause();
+        }
+    }
+
+    pub fn is_paused(&self) -> bool {
+        self.sink.is_paused()
     }
 }

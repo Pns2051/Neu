@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Neu
+Comment=High Performance Music Client
+Exec=neu-cpp
+Icon=org.neu.Neu
+Type=Application
+Categories=AudioVideo;Music;Player;Qt;
+Terminal=false
+StartupWMClass=neu-cpp

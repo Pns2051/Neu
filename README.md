@@ -1,98 +1,79 @@
 <p align="center">
-  <img src="app/assets/logo.jpg" width="120" alt="Neu Logo" />
+  <img src="neu-cpp/assets/logo.png" width="160" alt="Neu Logo" />
 </p>
 
-# Neu
+<h1 align="center">Neu Music Platform</h1>
 
-> A production-grade, cross-platform, modular music platform built with Rust and Slint.
+<p align="center">
+  <a href="https://github.com/Pns2051/neu/actions"><img src="https://img.shields.io/github/actions/workflow/status/Pns2051/neu/release.yml?branch=main&style=for-the-badge&logo=github" alt="Build Status"></a>
+  <a href="https://github.com/Pns2051/neu/releases"><img src="https://img.shields.io/github/v/release/Pns2051/neu?style=for-the-badge&logo=github&color=blue" alt="Latest Version"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-GPLv3-orange?style=for-the-badge" alt="License"></a>
+  <a href="#"><img src="https://img.shields.io/badge/platform-Linux-green?style=for-the-badge&logo=linux" alt="Platform"></a>
+</p>
 
-![License](https://img.shields.io/badge/license-GPLv3-blue.svg)
-![Rust](https://img.shields.io/badge/rust-1.75%2B-orange.svg)
-![Slint](https://img.shields.io/badge/ui-Slint-brightgreen.svg)
+<p align="center">
+  <b>A high-performance, modular music client for Linux. Built with C++ and Qt6.</b>
+</p>
 
-Music Client is a high-performance audio player designed from the ground up for extensibility. By leveraging a custom streaming buffer on top of Rodio, and a strict Plugin SDK, this app seamlessly unifies local libraries, YouTube streams, and algorithmic recommendations into a single, beautiful MD3 interface.
+<p align="center">
+  <img src="https://count.getloli.com/get/@neu-music?theme=moebooru" alt="Neu Download Counter" />
+  <br />
+  <i>Tracks downloaded by premium users!</i>
+</p>
 
-## 🌟 Features
+---
 
-- **Unified Data Model**: One interface for YouTube, Local Files, Spotify, and Apple Music (Extensible via Plugins).
-- **Custom Playback Engine**: Asynchronous chunk buffering integrated with `rodio` for gapless, HTTP-streamed audio.
-- **YouTube Innertube SDK**: Bypasses typical scrape limits with dynamic signature deciphering using AST-like parsing limits.
-- **Smart Recommendations**: A local, privacy-respecting Cosine-Similarity engine that recommends tracks based on your listening history embeddings.
-- **Tiered Distributed Cache**: Intelligent `Memory → Disk → Remote` caching ensures offline capability and minimal API usage.
-- **Cross-Platform MD3 UI**: A sleek, performant interface written in Slint, compiling natively to both Desktop and Android.
+<p align="center">
+  <img src="/home/ela/.gemini/antigravity/brain/58275e56-7830-40a9-9b79-d10c42332c25/neu_music_ui_redesign_1774614482753.png" width="800" alt="Neu UI Redesign" />
+</p>
 
-## 🏗️ Architecture
+## 🚀 Key Features
 
-The workspace is divided into specific, decoupled crates:
-- `app`: Slint UI, State config, Walkdir Local Plugin, and Cache.
-- `plugin_sdk`: The foundational traits (`MusicPlugin`, `UnifiedTrack`).
-- `playback`: Custom `StreamBuffer` and `rodio` wrapper.
-- `yt_cipher`: YouTube streaming URL extractor and cipher descrambler.
-- `recommender`: High-speed vector similarity engine.
+- **🚀 High Performance**: Native C++ logic with `QtMultimedia` (GStreamer/ALSA/PipeWire) for ultra-low latency.
+- **🎨 MD3 Glassmorphism**: A stunning, modern UI built with Qt Quick (QML).
+- **🔑 Social Login**: Integrated YouTube and Spotify OAuth2 for your personal library.
+- **📜 Synced Lyrics**: Real-time lyrics fetching from the LRCLIB API.
+- **🤖 Intelligence**: On-device vector similarity engine for privacy-first recommendations.
+- **🤝 Social Presence**: Built-in Discord Rich Presence integration.
 
-## 🚀 Getting Started
+## 🏗️ Technical Stack
 
-### Prerequisites
-- **Rust** (1.75+)
-- **Slint Build Dependencies** (CMake, C++ Compiler for some backends)
+- **GUI**: Qt 6.6+ / QML
+- **Audio**: Qt Multimedia / miniaudio
+- **Networking**: QNetworkAccessManager / QOAuth2
+- **Persistence**: SQLite (Qt Sql)
+- **Packaging**: .deb, .rpm, AppImage, Snap, Flatpak
 
-### Desktop Build
-1. Clone the repository:
-   ```sh
-   git clone https://github.com/yourusername/music-client.git
-   cd music-client
-   ```
-2. Run the application:
-   ```sh
-   cargo run -p app --release
-   ```
+## 📦 Installation (Linux)
 
-### Android Build
-You can build the native Android APK using the provided script (requires `cargo-apk` and `cross`):
-```sh
-./build_android.sh
+### Automated Build (Recommended)
+Our **One-Button Update** script handles everything:
+```bash
+./push_update.sh
 ```
 
-## 📦 Packaging for Release (.exe, .deb, macOS, .apk)
-
-To distribute Neu to end users without requiring them to install Rust, you can build native app bundles. We recommend using `cargo-packager`:
-
-### 1. Windows (`.exe` / `.msi`)
-Build from a Windows machine or via GitHub Actions.
-```shell
-cargo install cargo-packager
-cargo packager --release
+### Manual Build
+```bash
+mkdir build && cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release
+make -j$(nproc)
+./neu-cpp
 ```
-*This generates a standalone executable and `.msi` installer in `target/release/bundles/`.*
 
-### 2. Linux (`.deb` / `.AppImage`)
-Ensure you have `dpkg-dev` installed.
-```shell
-cargo install cargo-packager
-cargo packager --release
-```
-*Produces a `.deb` Debian package and an independent `.AppImage`.*
+## 🌍 Distribution
 
-### 3. macOS (`.app` / `.dmg`)
-Build from a Mac (or macOS CI runner).
-```shell
-cargo install cargo-packager
-cargo packager --release
-```
-*Creates a `.dmg` disk image ready for distribution.*
+Neu is available across all major Linux formats:
+- **Flatpak**: `flatpak install flathub org.neu.Neu`
+- **Snap**: `snap install neu-music`
+- **AppImage**: Download from [Releases](https://github.com/Pns2051/neu/releases)
 
-### 4. Android (`.apk`)
-Run the included shell script to generate the Android application package:
-```shell
-./build_android.sh
-```
-*This cross-compiles the Slint UI into an APK located in `target/android/release/apk/`.*
+---
 
+## 🤝 Community
 
-## 🤝 Contributing
+We welcome contributors! Check [CONTRIBUTING.md](./CONTRIBUTING.md) to get started.
 
-We welcome contributions! Please see our [CONTRIBUTING.md](./CONTRIBUTING.md) for detailed guidelines. **Note**: We allow AI-assisted development, provided the code is thoroughly supervised by an experienced programmer.
-
-## 📜 License
-
-This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
+<p align="center">
+  <i>Stay tuned for more updates!</i><br />
+  <img src="https://img.shields.io/badge/built%20with-antigravity-blueviolet?style=flat-square" alt="Antigravity">
+</p>

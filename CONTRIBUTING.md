@@ -25,10 +25,16 @@ This section guides you through submitting a bug report.
 
 ### Your First Code Contribution
 1. **Fork & Branch**: Fork the repo and create a new branch (`git checkout -b feature/your-feature-name`).
-2. **Setup**: Run `cargo build` in the workspace root to ensure your environment is working. (See `README.md` for dependencies like `slint`).
-3. **Develop**: Make your changes. Ensure you adhere to the `plugin_sdk` for new sources and the `StreamBuffer` traits for playback enhancements.
-4. **Test**: Run `cargo test` and `cargo clippy`. Ensure `cargo fmt` has been applied.
-5. **PR**: Open a Pull Request! Detail exactly what your code does and confirm it was reviewed heavily if AI-assisted.
+2. **Setup**: 
+    - For Rust: Run `cargo build` in the workspace root.
+    - For C++: Ensure Qt6 (Core, Gui, Qml, Quick, Network, Multimedia, Sql, NetworkAuth) is installed. Run `cmake -B build && cmake --build build`.
+3. **Develop**: 
+    - **Extensions**: If you are adding a new music source, follow the [PLUGINS.md](PLUGINS.md) guide to create a C++ extension.
+    - **Core**: Ensure you adhere to the `MusicPlugin` interface for new sources.
+4. **Test**: 
+    - Rust: Run `cargo test` and `cargo clippy`.
+    - C++: Ensure the build completes without errors.
+5. **PR**: Open a Pull Request! Detail exactly what your code does.
 
 ## Architecture Guidelines
 When contributing to the core engine:

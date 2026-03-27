@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>org.neu.Neu</id>
+  <name>Neu</name>
+  <summary>High Performance C++/Qt Music Client</summary>
+  <description>
+    <p>Neu is a modular, high-performance music platform built for Linux.</p>
+  </description>
+  <launchable type="desktop-id">org.neu.Neu.desktop</launchable>
+  <screenshots>
+    <screenshot type="default">
+      <caption>The main music player interface.</caption>
+      <image>https://raw.githubusercontent.com/Pns2051/neu/main/screenshots/main.png</image>
+    </screenshot>
+  </screenshots>
+  <url type="homepage">https://github.com/Pns2051/neu</url>
+</component>

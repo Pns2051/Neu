@@ -1,113 +1,318 @@
 import { Button, VerticalBox, ScrollView, StandardTableView, LineEdit, Slider } from "std-widgets.slint";
 
 export struct TrackData {
+    id: string,
     title: string,
     artist: string,
     duration: string,
+    album: string,
+    source: string, // "local" or "youtube"
+}
+
+component SidebarItem inherits Rectangle {
+    in-out property <string> text;
+    in-out property <bool> active;
+    in-out property <image> icon;
+    callback clicked;
+
+    height: 48px;
+    border-radius: 24px;
+    background: active ? #333333 : touch.has-hover ? #222222 : transparent;
+
+    touch := TouchArea {
+        clicked => { root.clicked(); }
+    }
+
+    HorizontalLayout {
+        padding-left: 16px;
+        spacing: 12px;
+        alignment: start;
+        
+        // Icon placeholder
+        Rectangle {
+            width: 24px;
+            height: 24px;
+            background: active ? #D1C4E9 : #B3B3B3;
+            border-radius: 4px;
+        }
+
+        Text {
+            text: root.text;
+            color: active ? white : #B3B3B3;
+            font-size: 14px;
+            font-weight: active ? 700 : 400;
+            vertical-alignment: center;
+        }
+    }
 }
 
 export component AppWindow inherits Window {
     title: "Neu";
-    preferred-width: 800px;
-    preferred-height: 600px;
+    preferred-width: 1000px;
+    preferred-height: 700px;
     background: #121212;
 
     in property <[TrackData]> tracks;
-    in property <string> now_playing: "No Track Playing";
+    in property <[TrackData]> recommended_tracks;
+    in property <string> now_playing_title: "Neu Music Platform";
+    in property <string> now_playing_artist: "Select a track to start";
+    in property <float> playback_progress: 0.0;
+    in property <float> volume: 0.8;
+    in property <bool> is_playing: false;
+    in property <string> current_view: "search"; // "search" or "recommended" or "library"
+
     callback search(string);
     callback play_track(int);
+    callback toggle_play_pause();
+    callback seek(float);
+    callback change_volume(float);
+    callback change_view(string);
 
     VerticalBox {
-        padding: 24px;
-        spacing: 16px;
+        padding: 0;
+        spacing: 0;
 
         HorizontalLayout {
-            spacing: 12px;
-            alignment: start;
-            Image {
-                source: @image-url("../assets/logo.jpg");
-                width: 48px;
-                height: 48px;
-            }
-            Text {
-                text: "Neu";
-                font-size: 28px;
-                font-weight: 700;
-                color: white;
-                vertical-alignment: center;
-            }
-        }
+            // SIDEBAR
+            Rectangle {
+                width: 240px;
+                background: #000000;
+                
+                VerticalBox {
+                    padding: 16px;
+                    spacing: 8px;
+                    alignment: start;
 
-        HorizontalLayout {
-            spacing: 12px;
-            search_input := LineEdit {
-                placeholder-text: "Search YouTube or Local...";
-                accepted => {
-                    root.search(self.text);
-                }
-            }
-            Button {
-                text: "Search";
-                primary: true;
-                clicked => {
-                    root.search(search_input.text);
-                }
-            }
-        }
-
-        ScrollView {
-            VerticalBox {
-                for track[index] in root.tracks: Rectangle {
-                    height: 60px;
-                    border-radius: 8px;
-                    background: touch.has-hover ? #2C2C2C : #1E1E1E;
-                    
-                    touch := TouchArea {
-                        clicked => {
-                            root.play_track(index);
+                    HorizontalLayout {
+                        spacing: 12px;
+                        padding-bottom: 24px;
+                        Image {
+                            source: @image-url("../assets/logo.jpg");
+                            width: 32px;
+                            height: 32px;
                         }
+                        Text {
+                            text: "Neu";
+                            color: white;
+                            font-size: 20px;
+                            font-weight: 800;
+                            vertical-alignment: center;
+                        }
+                    }
+
+                    SidebarItem {
+                        text: "Home";
+                        active: root.current_view == "recommended";
+                        clicked => { root.change_view("recommended"); }
+                    }
+                    SidebarItem {
+                        text: "Search";
+                        active: root.current_view == "search";
+                        clicked => { root.change_view("search"); }
+                    }
+                    SidebarItem {
+                        text: "Library";
+                        active: root.current_view == "library";
+                        clicked => { root.change_view("library"); }
+                    }
+                }
+            }
+
+            // MAIN CONTENT
+            VerticalBox {
+                padding: 24px;
+                spacing: 16px;
+
+                if root.current_view == "search": VerticalBox {
+                    spacing: 16px;
+                    HorizontalLayout {
+                        spacing: 12px;
+                        search_input := LineEdit {
+                            placeholder-text: "Search YouTube or Local...";
+                            accepted => { root.search(self.text); }
+                        }
+                        Button {
+                            text: "Search";
+                            primary: true;
+                            clicked => { root.search(search_input.text); }
+                        }
+                    }
+
+                    Text {
+                        text: "Search Results";
+                        color: white;
+                        font-size: 18px;
+                        font-weight: 700;
+                    }
+
+                    ScrollView {
+                        VerticalBox {
+                            alignment: start;
+                            for track[index] in root.tracks: Rectangle {
+                                height: 56px;
+                                border-radius: 4px;
+                                background: t1.has-hover ? #2C2C2C : transparent;
+                                
+                                t1 := TouchArea {
+                                    clicked => { root.play_track(index); }
+                                }
+
+                                HorizontalLayout {
+                                    padding: 8px;
+                                    spacing: 16px;
+                                    
+                                    Rectangle {
+                                        width: 40px;
+                                        height: 40px;
+                                        background: #333333;
+                                        border-radius: 4px;
+                                        Text {
+                                            text: track.source == "youtube" ? "YT" : "L";
+                                            color: #666666;
+                                            font-size: 10px;
+                                            horizontal-alignment: center;
+                                            vertical-alignment: center;
+                                        }
+                                    }
+
+                                    VerticalBox {
+                                        alignment: center;
+                                        Text {
+                                            text: track.title;
+                                            color: white;
+                                            font-size: 14px;
+                                        }
+                                        Text {
+                                            text: track.artist;
+                                            color: #B3B3B3;
+                                            font-size: 12px;
+                                        }
+                                    }
+                                    
+                                    Rectangle { } // Spacer
+
+                                    Text {
+                                        text: track.duration;
+                                        color: #666666;
+                                        vertical-alignment: center;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if root.current_view == "recommended": VerticalBox {
+                    Text {
+                        text: "Recommendations (For You)";
+                        color: white;
+                        font-size: 24px;
+                        font-weight: 800;
+                    }
+                    Text {
+                        text: "Based on your recent listening history";
+                        color: #B3B3B3;
+                        font-size: 14px;
+                    }
+                    // Recommendations content hidden for space...
+                }
+            }
+        }
+
+        // PLAYER BAR (Glassmorphism inspired)
+        Rectangle {
+            height: 96px;
+            background: #181818;
+            border-color: #282828;
+            border-width: 1px;
+
+            HorizontalLayout {
+                padding: 16px;
+                spacing: 24px;
+
+                // Track Info
+                HorizontalLayout {
+                    width: 30%;
+                    spacing: 12px;
+                    Rectangle {
+                        width: 56px;
+                        height: 56px;
+                        background: #333333;
+                        border-radius: 4px;
+                    }
+                    VerticalBox {
+                        alignment: center;
+                        Text {
+                            text: root.now_playing_title;
+                            color: white;
+                            font-size: 14px;
+                            font-weight: 700;
+                            overflow: elide;
+                        }
+                        Text {
+                            text: root.now_playing_artist;
+                            color: #B3B3B3;
+                            font-size: 12px;
+                            overflow: elide;
+                        }
+                    }
+                }
+
+                // Controls
+                VerticalBox {
+                    width: 40%;
+                    alignment: center;
+                    spacing: 8px;
+
+                    HorizontalLayout {
+                        alignment: center;
+                        spacing: 24px;
+                        // Prev
+                        Rectangle { width: 32px; height: 32px; background: transparent; }
+                        // Play/Pause
+                        Rectangle {
+                            width: 40px;
+                            height: 40px;
+                            background: white;
+                            border-radius: 20px;
+                            t_play := TouchArea {
+                                clicked => { root.toggle_play_pause(); }
+                            }
+                            Text {
+                                text: root.is_playing ? "||" : ">";
+                                color: black;
+                                font-size: 18px;
+                                font-weight: 900;
+                                horizontal-alignment: center;
+                                vertical-alignment: center;
+                            }
+                        }
+                        // Next
+                        Rectangle { width: 32px; height: 32px; background: transparent; }
                     }
 
                     HorizontalLayout {
-                        padding: 12px;
-                        spacing: 16px;
-                        Text {
-                            text: track.title;
-                            color: white;
-                            vertical-alignment: center;
-                            font-size: 16px;
-                            width: 300px; // Fixed width for alignment demo
+                        spacing: 12px;
+                        Text { text: "0:00"; color: #B3B3B3; font-size: 10px; vertical-alignment: center; }
+                        Slider {
+                            value: root.playback_progress;
+                            changed(val) => { root.seek(val); }
                         }
-                        Text {
-                            text: track.artist;
-                            color: #B3B3B3;
-                            vertical-alignment: center;
-                        }
+                        Text { text: "4:20"; color: #B3B3B3; font-size: 10px; vertical-alignment: center; }
                     }
                 }
-            }
-        }
 
-        Rectangle {
-            height: 90px;
-            border-radius: 12px;
-            background: #1E1E1E;
-            padding: 16px;
-
-            HorizontalLayout {
-                spacing: 16px;
-                alignment: center;
-                VerticalBox {
-                    alignment: center;
-                    Text {
-                        text: root.now_playing;
-                        color: white;
-                        font-weight: 700;
+                // Extra controls (Volume)
+                HorizontalLayout {
+                    width: 30%;
+                    alignment: end;
+                    spacing: 12px;
+                    Text { text: "Vol"; color: #B3B3B3; vertical-alignment: center; }
+                    Slider {
+                        width: 100px;
+                        value: root.volume;
+                        changed(val) => { root.change_volume(val); }
                     }
-                }
-                Button {
-                    text: "Play / Pause";
-                    width: 120px;
                 }
             }
         }
